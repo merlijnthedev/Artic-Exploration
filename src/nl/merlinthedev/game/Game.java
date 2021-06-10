@@ -23,6 +23,7 @@ public class Game extends Canvas implements Runnable {
 
 
     private JFrame frame;
+    private Thread thread;
 
     public boolean running = false;
     public int tickCount = 0;
@@ -85,11 +86,17 @@ public class Game extends Canvas implements Runnable {
 
     public synchronized void start() {
         running = true;
-        new Thread(this).start();
+        thread = new Thread(this);
+        thread.start();
     }
 
     public synchronized void stop() {
-        running = false;
+        try {
+            thread.join();
+            running = false;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void run() {
